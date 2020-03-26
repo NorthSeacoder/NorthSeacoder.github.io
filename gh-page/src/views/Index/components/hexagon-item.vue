@@ -10,7 +10,7 @@
             <div></div>
             <div></div>
         </div>
-        <a :href="record.link" class="hex-content">
+        <div class="hex-content" @click="jump">
             <span class="hex-content-inner">
                 <span class="icon">
                     <i :class="record.icon"></i>
@@ -18,7 +18,7 @@
                 <span class="title">{{record.title}}</span>
             </span>
             <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
-        </a>
+        </div>
     </div>
 </template>
 
@@ -30,7 +30,17 @@ export default {
             default:()=>{} 
         }
     },
-    
+    methods: {
+        jump() {
+            const vm = this;
+            const {record:{isRouter=false,link,key},$router} = vm;
+            if(!isRouter){
+                window.open(link, '_blank');
+            }else{
+                $router.push({name:'sub',params:{key}})
+            }
+        }
+    },
 }
 </script>
 

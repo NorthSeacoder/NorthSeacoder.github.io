@@ -2,7 +2,9 @@ export default [
     {
         link: 'https://www.yuque.com/ziminyueyueniao/logib2/bgz29l',
         title: '语雀',
-        icon:'n-icon-yuque'
+        icon:'n-icon-yuque',
+        isRouter:true,
+        key:'yuque'
     },
     {
         link: 'https://github.com/NorthSeacoder',
