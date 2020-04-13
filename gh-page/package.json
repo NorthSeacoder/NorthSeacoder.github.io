@@ -1,11 +1,11 @@
 {
-    "name": "gh-page",
+    "name": "nsc-homePage",
     "version": "0.1.0",
     "private": true,
     "scripts": {
         "start": "vue-cli-service serve",
         "build": "vue-cli-service build",
-        "deploy": "gh-pages -d dist -b master",
+        "deploy": "vue-cli-service build&&gh-pages -d dist -b master",
         "test:unit": "vue-cli-service test:unit"
     },
     "dependencies": {

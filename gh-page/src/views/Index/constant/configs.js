@@ -12,7 +12,7 @@ export default [
         icon:'n-icon-github'
     },
     {
-        link: 'https://github.com/NorthSeacoder',
+        link: './n-ui',
         title: 'n-ui',
         icon:'n-icon-n'
     },
