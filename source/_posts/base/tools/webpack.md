@@ -1,0 +1,114 @@
+---
+title: webpack
+comment: valine
+categories:
+    - - 基础
+      - tools
+tags:
+    - 基础
+    - tools
+date: 2022-03-07 10:08:29
+---
+
+> webpack 常见面试题
+
+<!-- more -->
+
+## Loader 和 Plugin 的区别
+
+-   loader 本质是一个函数,在函数中对接收到的内容进行转换,返回转换后的结果
+-   因为 Webpack 只认识 JavaScript，所以 Loader 就成了翻译官，对其他类型的资源进行转译的预处理工作。
+-   Loader 在 module.rules 中配置，作为模块的解析规则，类型为数组。每一项都是一个 Object，内部包含了 test(类型文件)、loader、options (参数)等属性。
+-   Plugin 就是插件，基于事件流框架 Tapable，插件可以扩展 Webpack 的功能，在 Webpack 运行的生命周期中会广播出许多事件，Plugin 可以监听这些事件，在合适的时机通过 Webpack 提供的 API 改变输出结果。
+-   Plugin 在 plugins 中单独配置，类型为数组，每一项是一个 Plugin 的实例，参数都通过构造函数传入
+
+## 常见 loader
+
+-   file-loader:把文件输出到一个文件夹中，在代码中通过相对 URL 去引用输出的文件 (处理图片和字体)
+-   url-loade:与 file-loader 类似，区别是用户可以设置一个阈值，大于阈值会交给 file-loader 处理，小于阈值时返回文件 base64 形式编码 (处理图片和字体)
+-   source-map-loader:加载额外的 Source Map 文件，以方便断点调试
+-   image-loader：加载并且压缩图片文件
+-   babel-loader：把 ES6 转换成 ES5
+-   ts-loader: 将 TypeScript 转换成 JavaScript
+-   sass-loader：将 SCSS/SASS 代码转换成 CSS
+-   css-loader：加载 CSS，支持模块化、压缩、文件导入等特性
+-   eslint-loader：通过 ESLint 检查 JavaScript 代码
+-   vue-loader：加载 Vue.js 单文件组件
+
+## 常见 plugins
+
+-   mini-css-extract-plugin: 分离样式文件，CSS 提取为独立文件，支持按需加载 (替代 extract-text-webpack-plugin)
+-   speed-measure-webpack-plugin: 可以看到每个 Loader 和 Plugin 执行耗时 (整个打包耗时、每个 Plugin 和 Loader 耗时)
+-   webpack-bundle-analyzer: 可视化 Webpack 输出文件的体积 (业务组件、依赖第三方模块)
+-   HotModuleReplacementPlugin：模块热替换
+
+## Webpack 构建流程
+
+Webpack 的运行流程是一个串行的过程，从启动到结束会依次执行以下流程：
+
+-   初始化参数：从配置文件和 Shell 语句中读取与合并参数，得出最终的参数
+-   开始编译：用上一步得到的参数初始化 Compiler 对象，加载所有配置的插件，执行对象的 run 方法开始执行编译
+-   确定入口：根据配置中的 entry 找出所有的入口文件
+-   编译模块：从入口文件出发，调用所有配置的 Loader 对模块进行翻译，再找出该模块依赖的模块，再递归本步骤直到所有入口依赖的文件都经过了本步骤的处理
+-   完成模块编译：在经过第 4 步使用 Loader 翻译完所有模块后，得到了每个模块被翻译后的最终内容以及它们之间的依赖关系
+-   输出资源：根据入口和模块之间的依赖关系，组装成一个个包含多个模块的 Chunk，再把每个 Chunk 转换成一个单独的文件加入到输出列表，这步是可以修改输出内容的最后机会
+-   输出完成：在确定好输出内容后，根据配置确定输出的路径和文件名，把文件内容写入到文件系统
+
+## source map 是什么？生产环境怎么用？
+
+-   source map 是将编译、打包、压缩后的代码映射回源代码的过程。打包压缩后的代码不具备良好的可读性，想要调试源码就需要 soucre map。
+-   线上环境一般有三种处理方案：
+    -   hidden-source-map：借助第三方错误监控平台 Sentry 使用
+    -   nosources-source-map：只会显示具体行数以及查看源代码的错误栈。安全性比 sourcemap 高
+    -   sourcemap：通过 nginx 设置将 .map 文件只对白名单开放(公司内网)
+
+## 文件监听原理
+
+-   在发现源码发生变化时，自动重新构建出新的输出文件。
+-   Webpack 开启监听模式，有两种方式：
+    -   启动 webpack 命令时，带上 --watch 参数
+    -   在配置 webpack.config.js 中设置 watch:true
+-   缺点：每次需要手动刷新浏览器
+-   原理:轮询判断文件的最后编辑时间是否变化，如果某个文件发生了变化，并不会立刻告诉监听者，而是先缓存起来，等 aggregateTimeout 后再执行。
+
+## Webpack 的热更新原理
+
+-   Webpack 的热更新又称热替换（Hot Module Replacement），缩写为 HMR。 这个机制可以做到不用刷新浏览器而将新变更的模块替换掉旧的模块。
+-   HMR 的核心就是客户端从服务端拉去更新后的文件，准确的说是 chunk diff (chunk 需要更新的部分)
+-   实际上 WDS 与浏览器之间维护了一个 Websocket，当本地资源发生变化时，WDS 会向浏览器推送更新，并带上构建时的 hash，让客户端与上一次资源进行对比
+-   客户端对比出差异后会向 WDS 发起 Ajax 请求来获取更改内容(文件列表、hash)，这样客户端就可以再借助这些信息继续向 WDS 发起 jsonp 请求获取该 chunk 的增量更新。
+-   后续的部分(拿到增量更新之后如何处理？哪些状态该保留？哪些又需要更新？)由 HotModulePlugin 来完成，提供了相关 API 以供开发者针对自身场景进行处理，像 react-hot-loader 和 vue-loader 都是借助这些 API 实现 HMR。
+
+## 如何对 bundle 体积进行监控和分析？
+
+-   VSCode 中有一个插件 Import Cost 可以帮助我们对引入模块的大小进行实时监测
+-   使用 webpack-bundle-analyzer 生成 bundle 的模块组成图，显示所占体积。
+-   bundlesize 工具包可以进行自动化资源体积监控
+
+## 如何保证各个 loader 按照预想方式工作？
+
+可以使用 enforce 强制执行 loader 的作用顺序，pre 代表在所有正常 loader 之前执行，post 是所有 loader 之后执行
+
+## 如何优化 Webpack 的构建速度
+
+-   使用高版本的 Webpack 和 Node.js
+-   多进程/多实例构建：thread-loader
+-   压缩代码
+    -   多进程并行压缩
+    -   通过 mini-css-extract-plugin 提取 Chunk 中的 CSS 代码到单独文件,通过 css-loader 的 minimize 选项开启 cssnano 压缩 CSS
+-   图片压缩:配置 image-webpack-loader
+-   缩小打包作用域
+    -   exclude/include (确定 loader 规则范围)
+    -   resolve.modules 指明第三方模块的绝对路径 (减少不必要的查找)
+    -   noParse 对完全不需要解析的库进行忽略
+    -   IgnorePlugin (完全排除模块)
+-   提取页面公共资源：使用 html-webpack-externals-plugin，将基础包通过 CDN 引入，不打入 bundle 中
+-   使用 DllPlugin 进行分包，让一些基本不会改动的代码先打包成静态资源，避免反复编译浪费时间
+-   充分利用缓存提升二次构建速度：
+    -   babel-loader 开启缓存
+    -   terser-webpack-plugin 开启缓存
+    -   使用 hard-source-webpack-plugin
+-   Tree shaking
+    -   打包过程中检测工程中没有引用过的模块并进行标记，在资源压缩时将它们从最终的 bundle 中去掉,(只能对 ES6 Modlue 生效) 开发中尽可能使用 ES6 Module 的模块，提高 tree shaking 效率
+-   Scope hoisting
+- Code Splitting:将代码按路由维度或者组件分块(chunk),这样做到按需加载,同时可以充分利⽤浏览器缓存
