@@ -1,1 +1,0 @@
-import{_ as e,c as a,o as t,b as n}from"./app.129ae037.js";const u=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"packages/rae-admin/index.md"}'),s={name:"packages/rae-admin/index.md"},r=n("p",null,"admin",-1),o=[r];function c(d,i,_,p,m,l){return t(),a("div",null,o)}var x=e(s,[["render",c]]);export{u as __pageData,x as default};
