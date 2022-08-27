@@ -1,0 +1,1 @@
+import{_ as e,c as t,o,b as a}from"./app.ce2dfef2.js";const u=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"note/daily/tools/index.md"}'),n={name:"note/daily/tools/index.md"},s=a("p",null,"\u5DE5\u5177\u7C7B",-1),r=[s];function c(d,i,_,l,p,m){return o(),t("div",null,r)}var x=e(n,[["render",c]]);export{u as __pageData,x as default};

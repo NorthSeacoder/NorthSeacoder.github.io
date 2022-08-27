@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as s,b as a}from"./app.ce2dfef2.js";const u=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"translate/articles/css/index.md"}'),r={name:"translate/articles/css/index.md"},n=a("p",null,"css",-1),c=[n];function o(i,d,_,l,p,m){return s(),t("div",null,c)}var x=e(r,[["render",o]]);export{u as __pageData,x as default};

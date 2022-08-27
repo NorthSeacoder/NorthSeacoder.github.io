@@ -1,0 +1,1 @@
+import{_ as e,c as a,o as t,b as n}from"./app.ce2dfef2.js";const k=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"packages/franky/index.md"}'),r={name:"packages/franky/index.md"},s=n("p",null,"franky",-1),o=[s];function c(d,_,i,p,f,l){return t(),a("div",null,o)}var u=e(r,[["render",c]]);export{k as __pageData,u as default};

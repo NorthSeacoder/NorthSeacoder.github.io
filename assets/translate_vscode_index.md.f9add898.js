@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a,b as s}from"./app.ce2dfef2.js";const u=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"translate/vscode/index.md"}'),o={name:"translate/vscode/index.md"},n=s("p",null,"vscode",-1),r=[n];function c(d,_,i,l,p,m){return a(),t("div",null,r)}var v=e(o,[["render",c]]);export{u as __pageData,v as default};
